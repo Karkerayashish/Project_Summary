@@ -1,0 +1,1377 @@
+<center> # Supply Chain Profit Analysis </center>
+
+---
+# **1. Introduction**
+---
+According to <a href = "https://6fefcbb86e61af1b2fc4-c70d8ead6ced550b4d987d7c03fcdd1d.ssl.cf3.rackcdn.com/cms/reports/documents/000/004/072/original/CDP_Supply_Chain_Report_2019.pdf?1550490556">**CDP's Supply Chain Report 2019**</a>, the CDP(Carbon Disclosure Project) **Supply Chain program**
+has **continuously grown** its impact **over** the **past
+decade**. Since its **launch in 2008 with 14 members**,
+the program has **now expanded to** bring together
+**115 major** purchasing **organizations around** the
+**world**, collectively **representing** **US$3.3 trillion** in
+**procurement** **spend**. 
+
+The **lesson** from a decade of the CDP Supply Chain
+program **is** that large **public and private sector**
+organizations really **can lead effective change**
+**through** using **their** substantial **procurement spend** as
+a powerful lever for action. **If others** can **follow** their
+example, and **suppliers continue to cascade good
+practices** and commitments further **down the supply
+chain**, **this** can **play** a **huge role in the rapid transition**
+**to** a **sustainable, low carbon economy**.
+
+<center><img src = "https://raw.githubusercontent.com/Karkerayashish/Supply_Chain_Profit_Analysis/master/Supply%20Chain%20Management%201.png"></center>
+
+So in **summary**, there is **there is direct impact on environment** in supply chain program. Most **companies** begin with the best **intentions** to **achieve successful** and **sustainable supply chain cost** management, but **somehow** seem to **lose** **momentum**, only to **see costs increase** against in **short order**. The **supply chain process** should be **handled** in such a way that there is **minimum impact** on **environment** while **covering maximum profit**. 
+
+**<h4>Note:</h4>** In this case study we will be **ignoring** the **study of environmental factors** because **most** of the **companies don't disclose** their **reports** on environmental impacts and only **focusing** on the **profit accquirement**.
+
+<a id = Section2></a>
+
+---
+# **2. Problem Statement**
+---
+
+Supply Chain **initiates** from gathering **raw materials**, **supplying** raw materials by supplier to the **manufacturing**, **delivering** to **retailers** by the **distributer**. Finally these products are **consumed** by the **consumer**. With the **increase** in **demand** this **process** **repeats** over again.
+
+<center><img src = "https://raw.githubusercontent.com/Karkerayashish/Supply_Chain_Profit_Analysis/master/Supply-Chain-Example.png"></center>
+
+**<h3>Scenario:</h3>**
+
+**DataCo** an **IT** service management **company**, **used** this **data** to **analyse** the **supply chain** in **areas** of **important** registered **activities** which includes **Provisioning** , **Production** , **Sales** and **Commercial Distribution**. But due to their **traditional processing** methodolgy, they are **unable** to **capture** the **true picture** of their data. They **want** to **identify growth opportunities** related to a given industry within a region. 
+
+They **hired** a **team** of **data scientists** to **analyse and build an automated solution** which can **help** in **identifying key patterns** out of their data **leading growth** of their **company**.
+
+**Note:** Here we will be involved only between Retailer, Consumer & Supplier.
+
+
+
+| Target Feature | Potential Values |
+| :-- | :-- |
+|**Benefit per order**|Range: [ -4274.97, 911.7 ]|
+
+<a id = Section3></a>
+
+---
+# **3. Installing & Importing Libraries**
+---
+
+<a id = Section31></a>
+### **3.1 Installing Libraries**
+
+!pip install -q datascience                   # Package that is required by pandas profiling
+!pip install -q pandas-profiling              # Toolbox for Generating Statistics Report
+!pip install -q yellowbrick                   # Toolbox for Measuring Machine Performance
+!pip install -q imbalanced-learn              # Toolbox for Imbalanced Dataset
+!pip install -q category-encoders  
+
+<a id = Section32></a>
+### **3.2 Upgrading Libraries**
+
+**Note:** After upgrading, you need to restart the runtime. Make sure not to execute the cell above (3.1) and below (3.2) again after restarting the runtime.
+
+!pip install -q --upgrade pandas-profiling
+!pip install -q --upgrade yellowbrick
+
+# For Data Analysis
+import pandas as pd
+from pandas_profiling import ProfileReport
+import pandas.util.testing as tm
+pd.set_option('display.max_columns', None)
+pd.set_option('display.max_colwidth', -1)
+pd.set_option('display.max_rows', None)
+pd.set_option('mode.chained_assignment', None)
+
+# For Numerical Python
+import numpy as np
+
+# For Random seed values
+from random import randint
+
+# For Scientific Python
+from scipy import stats
+
+# For datetime
+from datetime import datetime as dt
+
+# For Data Visualization
+import matplotlib.pyplot as plt
+%matplotlib inline
+import seaborn as sns
+import plotly.express as px
+from plotly.offline import plot
+
+# For Preprocessing
+from sklearn.preprocessing import StandardScaler
+
+# For Encoding Categorical Features
+from category_encoders import TargetEncoder
+
+# For Feature Selection
+from sklearn.feature_selection import SelectFromModel
+
+# For Feature Importance
+from yellowbrick.model_selection import FeatureImportances
+
+# For metrics evaluation
+from sklearn.metrics import mean_squared_error, r2_score
+
+# For Data Modeling
+from sklearn.model_selection import train_test_split, cross_val_score, GridSearchCV, RandomizedSearchCV
+from sklearn.linear_model import LinearRegression
+from sklearn.tree import DecisionTreeRegressor
+from sklearn.ensemble import RandomForestRegressor
+
+# For Disabelling Warnings
+import warnings
+warnings.filterwarnings("ignore")
+
+<a id=Section4></a>
+
+---
+# **4. Data Acquisition & Description**
+---
+
+This data set is based on supply chain management provided by DataCo Global and is accessible <a href="https://storage.googleapis.com/retail-analytics-data/DataCoSupplyChainDataset.csv">**here**</a>.
+
+
+| Records | Features | Dataset Size |
+| :-- | :-- | :-- |
+| 180519 | 53 | 91.4 MB|
+
+|Id|Features|Description|
+| :-- | :-- | :-- |
+|01|**Type**|Type of tranasaction made.|
+|02|**Days for shipping (real)**|Actual shipping days of the purchased product.|
+|03|**Days for shipment (scheduled)**|Days of scheduled delivery of the purchased product.|
+|04|**Benefit per order**|Earnings per order placed.|
+|05|**Sales per customer**|Total sales made per customer. Generally gives you an idea about how much a customer is spening.|
+|06|**Delivery Status**|Delivery status of orders: [Advance shipping , Late delivery , Shipping canceled , Shipping on time].|
+|07|**Late_delivery_risk**|Categorical variable that indicates if sending is late (1), it is not late (0).|
+|08|**Category Id**|Product category code.|
+|09|**Category Name**|Description of the product category.|
+|10|**Customer City**|City where the customer made the purchase.|
+|11|**Customer Country**|Country where the customer made the purchase.
+|12|**Customer Email**|Customer's email.|
+|13|**Customer Fname**|Customer's first name.|
+|14|**Customer Id**|Customer unique ID.|
+|15|**Customer Lname**|Customer's last name.|
+|16|**Customer Password**|Masked customer key.|
+|17|**Customer Segment**|Types of Customers: [Consumer , Corporate , Home Office.]|
+|18|**Customer State**|State to which the store where the purchase is registered belongs.|
+|19|**Customer Street**|Street to which the store where the purchase is registered belongs.|
+|20|**Customer Zipcode**|Customer zipcode.|
+|21|**Department Id**|Department code of store.|
+|22|**Department Name**|Department name of store.|
+|23|**Latitude**|Latitude corresponding to location of store.|
+|24|**Longitude**|Longitude corresponding to location of store.|
+|25|**Market**|Market to where the order is delivered : Africa , Europe , LATAM , Pacific Asia , USCA.|
+|26|**Order City**|Destination city of the order.|
+|27|**Order Country**|Destination country of the order.|
+|28|**Order Customer Id**|Customer order code.|
+|29|**order date (DateOrders)**|Date on which the order is made.|
+|30|**Order Id**|Order code.|
+|31|**Order Item Cardprod Id**|Product code generated through the RFID reader.|
+|32|**Order Item Discount**|Order item discount value.|
+|33|**Order Item Discount Rate**|Order item discount percentage.|
+|34|**Order Item Id**|Order item code.|
+|35|**Order Item Product Price**|Price of products without discount.|
+|36|**Order Item Profit Ratio**|Order Item Profit Ratio.|
+|37|**Order Item Quantity**|Order Item Quantity.|
+|38|**Sales**|Value in sales(selling price).|
+|39|**Order Item Total**|Total amount per order.|
+|40|**Order Profit Per Order**|Order Profit Per Order.|
+|41|**Order Region**|Region of the world where the order is delivered :  [Southeast Asia ,South Asia ,Oceania ,Eastern Asia, West Asia , West of USA , US Center , West Africa, |
+|||Central Africa ,North Africa ,Western Europe ,Northern , Caribbean , South America ,East Africa ,Southern Europe , East of USA ,Canada ,Southern Africa ,|
+||| Central Asia ,  Europe , Central America, Eastern Europe , South of  USA.]|
+|42|**Order State**|State of the region where the order is delivered.|
+|43|**Order Status**|Order Status : [COMPLETE , PENDING , CLOSED , PENDING_PAYMENT ,CANCELED , PROCESSING ,SUSPECTED_FRAUD ,ON_HOLD ,PAYMENT_REVIEW.]|
+|44|**Order Zipcode**|Zipcode of the region where the order is delivered.|
+|45|**Product Card Id**|Product code.|
+|46|**Product Category Id**|Product category code.|
+|47|**Product Description**|Product Description.|
+|48|**Product Image**|Link of visit and purchase of the product (Masked).|
+|49|**Product Name**|Product Name.|
+|50|**Product Price**|Product Price.|
+|51|**Product Status**|Status of the product stock :[If it is 1 not available , 0 the product is available.]|
+|52|**Shipping date (DateOrders)**|Exact date and time of shipment.|
+|53|**Shipping Mode**|The following shipping modes are presented : [Standard Class , First Class , Second Class , Same Day].|
+
+
+
+
+
+LINK = 'https://storage.googleapis.com/retail-analytics-data/DataCoSupplyChainDataset.csv'
+
+def load_supply_data(link = LINK):
+  return pd.read_csv(filepath_or_buffer = link, encoding = 'latin1')
+
+data = load_supply_data()
+print('Data Shape:', data.shape)
+data.head()
+
+<a id = Section41></a>
+### **4.1 Data Description**
+
+- In this section we will get **information about the data** and see some observations.
+
+print('Described Column Length:', len(data.describe().columns))
+data.describe()
+
+**Observation:**
+
+- On **average** it takes **more than 3 days** for **shipping** the **product**.
+- It took **atmost two days** to **ship 25% of orders** while **50% of orders took 3 days** and **75% of orders atmost 5 days**.
+- On **average** it **takes around 3 days to ship** the **product** on **schedule**.
+- For **25% of products**, it **took atmost two days** to **schedule** for shipment while for **more than 25%** it **took atmost 4 days**.
+- On **average** the **earning per order** placed is **~$\$$22 dollars**.
+- For **25% of products**, **earning per order is $\$$7 dollars** while for **50% and 75% of products**, it is **$\$$31 dollars and $\$$64 dollars**.
+- On **average** a **customer** is **spending** about **$\$$183 dollars**.
+- **25% of customers** are **spending $\$$104 dollars**, while **50% and 75% are spending $\$$163 dollars and $\$$247 dollars**.
+- **25% of orders** were **not late** while **above that they were late**.
+- On average around $\$$20 dollars discount was available on products.
+- For **25% of products**, the **discount value was $\$$5 dollars** while for **50% and 75% it was $\$$14 dollars and $\$$30 dollars**.
+- On **average** **10% discount was aviailable** on **each product**.
+- For **25% of products**, **discount rate was 4%** while for **50% and 75% of products it was 10% and 16%**.
+- **25% of ordered products** are in **range<= $\$$50 dollars** while **50% and 75% of products are $\$$60 and $\$$200 dollars**.
+- On **average** **12% of profit** is **achieved** on **ordered products**.
+- For **25% of products order item profit ratio is 8%** while for **50% and 75% of items profilt ratio is 27% and 36%**.
+- **50% of ordered product items** were **unit** while **greater than 50 it was 3**.
+- On **average sales** of ordered **item** was around **$\$$203 dollars**.
+- **25% of products** ordered were **sold at $\$$120 dollars**, while **50% and 75% of products had selling price of $\$$200 dollars and $\$$300 dollars**.
+- On **average total amount of ordered item was $\$$183 dollars**.
+- **25% of total amount** to pay on **ordered item was $\$$104 dollars** while for **50% and 75% it was $\$$164 dollars and $\$$247 dollars**.
+- On **average order profit per order was $\$$21.97 dollars**.
+- **25% of orders have profit per order of $\$$7 dollars** while for **50% and 75% it was $\$$31 dollars and $\$$65 dollars**.
+
+<a id = Section42></a>
+### **4.2 Data Information**
+
+- In this section we will see the **information about the types of features**.
+
+data.info()
+
+**Observation:**
+
+- **Feature:** 
+  - Problem &rarr; Action Required
+- **Customer Lname:** 
+  - Missing Information(8 Records) &rarr; Drop Records
+- **Customer Zipcode:** 
+  - Missing Information(3 Records) &rarr; Drop Records 
+  - Incorrect Data Type &rarr; Integer Transformation
+- **order date (DateOrders):** 
+  - Incorrect Data Type &rarr; Datetime Transformation
+- **Order Zipcode:** 
+  - Missing Information(155679 Records) &rarr; Drop Feature 
+  - Incorrect Data Type &rarr; Integer Transformation
+- **Product Description:** 
+  - Missing Information(180519 Records) &rarr; Drop Feature
+- **shipping date (DateOrders):** 
+  - Incorrect Data Type &rarr; Datetime Transformation
+
+<a id = Section43></a>
+### **4.3 Numerical Data Distribution:**
+
+- We shall plot all **numerical features to analyze the distribution** of their past.
+- But **before** that we must **extract** all the **numerical** **features** which has been **performed** **below**.
+
+num_feature = []
+
+for i in data.columns.values:
+  if ((data[i].dtype == int) | (data[i].dtype == float)):
+    num_feature.append(i)
+    
+print('Total Numerical Features:', len(num_feature))
+print('Features:', num_feature)
+
+# Creating subplots
+fig, axes = plt.subplots(nrows = 10, ncols = 3, sharex = False, figsize=(15, 25))
+
+# Generating random colors based on number of columns
+colors = []
+for i in range(len(num_feature)):
+  colors.append('#%06X' % randint(0, 0xFFFFFF))   
+                
+for ax, col, color in zip(axes.flat, num_feature, colors):
+  sns.distplot(a = data[col], bins = 50, ax = ax, color = color)
+  ax.set_title(col)
+  plt.setp(axes, xlabel = '')
+  ax.grid(False)
+plt.tight_layout()
+plt.show()
+
+**Observation:**
+
+- **Positively Skewed Features (Mean > Median > Mode):**
+  - Days for shipping (real)
+  - Sales per customer
+  - Order Item Discount
+  - Order Item Product Price
+  - Order Item Quantity
+  - Sales
+  - Order Item Total
+  - Product Price
+- **Negatively Skewed Features (Mean < Median < Mode):**
+  - Days for shipping (scheduled)
+  - Benifit per order
+  - Late_delivery_risk
+  - Latitude
+  - Longitude
+  - Order Item Profit Ratio
+  - Order Profit Per Order
+- **Normally Distributed Features (Mean = Median = Mode):**
+  - Order Item Discount Rate
+  - Product Status
+
+<a id = Section44></a>
+### **4.4 Pre Profiling Report**
+
+- For quick analysis pandas profiling is very handy.
+- Generates profile reports from a pandas DataFrame.
+- For each column statistics are presented in an interactive HTML report.
+
+#profile = ProfileReport(df = data)
+#profile.to_file(output_file = 'Pre Profiling Report.html')
+#print('Accomplished!')
+#from google.colab import files                   # Use only if you are using Google Colab, otherwise remove it
+#files.download('Pre Profiling Report.html')      # Use only if you are using Google Colab, otherwise remove it
+
+**Observation:**
+
+- Report shows that there are **25 numeric**, **24 categorical**, **2 boolean, 1 url** and **1 variable of unsupported data type**.
+- Around **3.5 % of the cells have missing values**.
+- **Delivery Status** has **4 distinct values**.
+- **Category Name** has very **high cardinality** with **50 distinct values**.
+- **Customer City** has very **high cardinality** with **563 distinct values**.
+- **Customer State** has very **high cardinality** with **46 distinct values**.
+- There are **5 distinct values** in the **Market feature**.
+- The **mean, minimum and maximum Sales is $\$$203.77 dollars, $\$$9.98 dollars and $\$$1999.98 dollars** respectively.
+- The **mean Order Profit Per Order is $\$$21.97 dollars**.
+- There are **9 distinct values** in **Order Status**.
+- **Product Name** has **high cardinality** with **118 distinct values**.
+- The **mean, minimum and maximum of Product Price is $\$$141.23 dollars, $\$$9.98 dollars and $\$$1999.98 dollars** respectively.
+- **5.6%** of the **values in Order Item Discount are 0**.
+- **Order Zipcode** has **86.2% missing values**.
+
+<a id = Section5></a>
+
+---
+# **5. Data Pre-Processing**
+---
+
+<a id = Section51></a>
+### **5.1 Identification & Handling of Missing Data**
+
+#### **5.1.1 Null Data Identification & Handling**
+
+**Before Handling Null Data**
+
+null_frame = pd.DataFrame(index = data.columns.values)
+null_frame['Null Frequency'] = data.isnull().sum().values
+percent = data.isnull().sum().values/data.shape[0]
+null_frame['Missing % age'] = np.round(percent,decimals=4)*100
+null_frame.transpose()
+
+**Observation:**
+
+- **Feature:** 
+  - Problem &rarr; Action Required
+- **Customer Lname:** 
+  - Missing Information(8 Records) &rarr; Drop Records
+- **Customer Zipcode:**
+  - Missing Information(3 Records) &rarr; Drop Records
+- **Order Zipcode:** 
+  - Missing Information(155679 Records) &rarr; Drop Feature
+- **Product Description:** 
+  - Missing Information(180519 Records) &rarr; Drop Feature
+
+**Performing Operations**
+
+print('Data Shape [Before]:',data.shape)
+data.dropna(axis=0,subset=['Customer Lname', 'Customer Zipcode'], inplace = True)
+data.drop(['Order Zipcode', 'Product Description'], axis = 1, inplace = True)
+print('Data Shape [After]:',data.shape)
+
+**After Handling Null Data**
+
+- Now that we have performed the operations, let's verify whether the null data has been eliminated or not.
+
+null_frame = pd.DataFrame(index = data.columns.values)
+null_frame['Null Frequency'] = data.isnull().sum().values
+percent = data.isnull().sum().values/data.shape[0]
+null_frame['Missing %age'] = np.round(percent, decimals = 4) * 100
+null_frame.transpose()
+
+**Observation:**
+
+- We can see that we have **eliminated null data successfully**.
+
+#### **5.1.2 Zero Data Identification & Handling**
+
+zero_frame = pd.DataFrame(index = data.columns.values)
+zero_frame['Null Frequency'] = data[data == 0].count().values
+percent = data[data == 0].count().values / data.shape[0]
+zero_frame['Missing %age'] = np.round(percent, decimals = 4) * 100
+zero_frame.transpose()
+
+**Observation:**
+
+- **Feature:** 
+  - Problem &rarr; Action Required {Reason}
+- **Days for shipping (real):**
+  - Identified 5080 Zeros &rarr; None {It is ordinal data.}
+- **Days for shipment (scheduled):**
+  - Identified 9737 Zeros &rarr; None {It is ordinal data.}
+- **Benefit per order:** 
+  - Identifed 1177 Zeros &rarr; None {Benifit can be 0 in amount.}
+- **Late_delivery_risk:** 
+  - Identified 81536 Zeros &rarr; None {It is ordinal data.}
+- **Order Item Discount:** 
+  - Identifed 10028 Zeros &rarr; None {Discount amount can be zero on certain items.}
+- **Order Item Discount Rate:** 
+  - Identified 10028 Zeros &rarr; None {Discount rate can be zero on certain items.}
+- **Order Item Profit Ratio:**
+  - Identified 1177 Zeros &rarr; None {Profite ratio can be zero for ordered items.}
+- **Order Profit Per Order:** 
+  - Identified 1177 Zeros &rarr; None {Profit per order can be zero.}
+- **Product Status:**
+  - Identified 180508 Zeros &rarr; None {It is ordinal data.}
+
+<a id = Section52></a>
+### **5.2 Identification & Handling of Redundant Data**
+
+- In this section **we will identify redundant rows and columns** in our data if present.
+- **Before** we will **make a copy of our data** and **drop** some **features** which **uniquely identify** our data points (Id Features). 
+- We will **analyze** the **effect** on this **copy of data** and **later down**, all the **changes** will be **introduced** in the **original data**.
+ 
+
+id_list = []
+for i in data.columns.values:
+  if 'Id' in i:
+    id_list.append(i)
+print('Total Length: ',len(id_list))
+print(id_list)
+
+
+data_copy = data.copy()
+data_copy.drop(id_list, axis = 1, inplace = True)
+print('Data Copy Shape:', data_copy.shape )
+
+#### **5.2.1 Identfication & Handling of Redundant Records**
+
+print('Contains Redundant Records?:', data_copy.duplicated().any())
+
+**Observation:**
+
+- It turns out that there are **no redundant records present** in our data.
+
+#### **5.2.2 Identfication & Handling of Redundant Features**
+
+- For handling duplicate features we have created a custom function to identify duplicacy in features with different name but similar values below.
+
+def duplicate_cols(dataframe):
+  ls1 = []
+  ls2 = []
+
+  columns = dataframe.columns.values
+  for i  in range(0, len(columns)):
+    for j  in range(i+1, len(columns)):
+      if (np.where(dataframe[columns[i]] == dataframe[columns[j]], True, False).all() == True):
+        ls1.append(columns[i])
+        ls2.append(columns[j])
+
+  if ((len(ls1) == 0) & (len(ls2) == 0)):
+    return None
+  else:
+    duplicate_frame = pd.DataFrame()
+    duplicate_frame['Feature 1'] = ls1
+    duplicate_frame['Feature 2'] = ls2
+    return duplicate_frame 
+
+
+**Before Handling Redundant Columns**
+
+duplicate_cols(data_copy)
+
+**Observation:**
+
+- We can see that **Feature 1** and **Feature 2** are **explaining** the **same thing** so we can **get rid** of **one side** of **features**.
+- We dropped following features with reason:
+  - **Feature : Reason**
+  - Order Profit Per Order : Explaining same as Benifit per order.
+  - Order Item Total : Explaining same as Sales per customer.
+  - Product Price : Explaining same as Order Item Product Price.
+  - Customer Email & Customer Password : Both are masked and have same length value.
+
+
+data_copy.drop(['Order Profit Per Order', 'Order Item Total', 'Customer Email', 'Customer Password', 'Product Price'],axis = 1, inplace = True)
+print('Data Copy Shape:', data_copy.shape)
+
+**After Handling Redundant Features**
+
+print(duplicate_cols(data_copy))
+
+**Applying Above Operations on Original Data**
+
+complete_list = id_list+['Order Profit Per Order', 'Order Item Total', 'Customer Email', 'Customer Password', 'Product Price']
+data.drop(complete_list, axis = 1, inplace = True)
+print('Data Shape:', data.shape)
+
+<a id = Section53></a>
+### **5.3 Identification & Handling of Inconsistent Data Types**
+
+**Before changes: Respective Data Type per Feature**
+
+type_frame = pd.DataFrame(data = data.dtypes, columns = ['Type'])
+type_frame.transpose()
+
+**Observation:**
+
+- **Inconsistent Feature:** 
+  - Actual Type &rarr; Desired Type
+- **Customer Zipcode:**
+  - Float &rarr; Integer
+- **order date (DateOrders):**
+  - Object &rarr; Datetime
+- **shipping date (DateOrders):**
+  - Object &rarr; Datetime
+
+**Performing Operations**
+
+data['Customer Zipcode'] = data['Customer Zipcode'].astype(int)
+
+# Removing Time Factor (Example: 2018-01-31 22:00 --> 2018-01-31)
+data['order date (DateOrders)'] = pd.to_datetime(data['order date (DateOrders)']).apply(dt.date)
+data['shipping date (DateOrders)']=pd.to_datetime(data['shipping date (DateOrders)']).apply(dt.date)
+
+# Transforming Object Type to Datetime
+data['order date (DateOrders)'] = pd.to_datetime(data['order date (DateOrders)'])
+data['shipping date (DateOrders)']=pd.to_datetime(data['shipping date (DateOrders)'])
+
+**After changes: Respective Data Type per Feature**
+
+type_frame = pd.DataFrame(data = data.dtypes, columns=['Type'])
+type_frame.transpose()
+
+<a id = Section54></a>
+### **5.4 Post Profiling Report**
+
+- In post profiling, we identify the changes over cleansed data.
+
+#profile = ProfileReport(df = data)
+#profile.to_file(output_file = 'Post Profiling Report.html')
+#print('Accomplished!')
+#from google.colab import files                   # Use only if you are using Google Colab, otherwise remove it
+#files.download('Post Profiling Report.html')     # Use only if you are using Google Colab, otherwise remove it
+
+**Observation:**
+
+- Report shows that there are **total 38 variables** out of which **20 are categorical**, **13 are numerical**, **2 are boolean**, **2 are date** and **1 is url type**.
+- **Order Item Product Price** is **highly right skewed**.
+- **Sales** is **highly right skewed**.
+- **Order Item Profit Ratio** and **Benefit per order are highly correlated**.
+
+<a id = Section6></a>
+
+---
+# **6. Exploratory Data Analysis**
+---
+
+**<h4>Question 1: What is the frequency and proportion of scheduled shipment days of order?</h4>**
+
+schedule_shipment = pd.DataFrame(data['Days for shipment (scheduled)'].value_counts())
+schedule_shipment.reset_index(inplace=True)
+schedule_shipment.columns = ['Days for shipment (scheduled)', 'Frequency']
+schedule_shipment.set_index('Days for shipment (scheduled)', inplace = True)
+schedule_shipment.transpose()
+
+# Creating Figure Instance
+figure = plt.figure(figsize = [15, 7])
+
+colors_list1 = ['#EF553B', '#00CC96', '#AB63FA', '#FFA15A']
+colors_list2 = ['#FFA15A', '#AB63FA', '#00CC96', '#EF553B']
+
+# Plotting Plot 1 i.e. Bar Plot
+plt.subplot(1, 2, 1)
+ax = sns.barplot(data['Days for shipment (scheduled)'].value_counts().index, data['Days for shipment (scheduled)'].value_counts(), palette  = colors_list1)
+plt.yticks(range(0, 120000, 10000), size = 14)
+plt.xlabel('Days for shipment (scheduled)', size = 14)
+plt.ylabel('Frequency', size = 14)
+plt.title('Frequency Occurence', y=1.02, size = 14)
+
+# Plotting Plot 2 i.e. Pie Plot
+explode_list = [0.2, 0 , 0, 0]
+
+plt.subplot(1, 2, 2)
+data['Days for shipment (scheduled)'].value_counts().plot(kind = 'pie', figsize = [15, 7], autopct = '%1.1f%%', startangle = 90, 
+                                     shadow = True, labels = None, pctdistance = 1.12, colors = colors_list2, 
+                                     explode = explode_list)
+plt.title('Proportion', y = 1.02, size = 14)
+plt.ylabel('')
+plt.axis('equal')
+plt.legend(labels = data['Days for shipment (scheduled)'].value_counts().index, loc = 'upper right', frameon = False)
+plt.suptitle(t = 'Frequency & Proportion of Days for shipment (scheduled)', y = 1.05, size = 16)
+plt.tight_layout(pad = 2.0)
+plt.show()
+
+**Observation:**
+
+- **~ 60%** of the **orders** have **scheduled shipment** of **4 days**, while **19% of orders** have **2 days**, **15.5%** have **1 day** and **5.4% have zero days**.
+
+**<h4>Question 2: What is the frequency and proportion of real shipment days of order?</h4>**
+
+schedule_shipment = pd.DataFrame(data = data['Days for shipping (real)'].value_counts())
+schedule_shipment.reset_index(inplace = True)
+schedule_shipment.columns = ['Days for shipping (real)', 'Frequency']
+schedule_shipment.set_index('Days for shipping (real)', inplace = True)
+schedule_shipment.transpose()
+
+# Creating Figure Instance
+figure = plt.figure(figsize = [15, 7.25])
+
+colors_list1 = ['#636EFA', '#EF553B', '#00CC96', '#AB63FA', '#FFA15A', '#19D3F3', '#FF6692']
+colors_list2 = ['#00CC96', '#AB63FA', '#FF6692', '#FFA15A', '#19D3F3', '#636EFA', '#EF553B']
+
+# Plotting Plot 1 i.e. Bar Plot
+plt.subplot(1, 2, 1)
+sns.barplot(x = data['Days for shipping (real)'].value_counts().index, y = data['Days for shipping (real)'].value_counts(), palette  = colors_list1)
+plt.yticks(range(0, 65000, 5000), size = 14)
+plt.xlabel('Days for shipping (real)', size = 14)
+plt.ylabel('Frequency', size = 14)
+plt.title('Frequency Occurence', y=1.02, size = 14)
+
+# Plotting Plot 2 i.e. Pie Plot
+explode_list = [0.2, 0 , 0, 0, 0, 0, 0]
+
+plt.subplot(1, 2, 2)
+data['Days for shipping (real)'].value_counts().plot(kind = 'pie', figsize = [15, 7.25], autopct = '%1.1f%%', startangle = 90, 
+                                     shadow = True, labels = None, pctdistance = 1.12, colors = colors_list2, 
+                                     explode = explode_list)
+plt.title('Proportion', y = 1.02, size = 14)
+plt.ylabel('')
+plt.axis('equal')
+plt.legend(labels = data['Days for shipping (real)'].value_counts().index, loc = 'upper right', frameon = False)
+plt.suptitle(t = 'Frequency & Proportion of Days for shipping (real)', y = 1.05, size = 16)
+plt.tight_layout(pad = 1.0)
+plt.show()
+
+**Observation:**
+
+- **~31% of orders took 2 days** to be shipped while **~16% of orders took 3 or 6 days** to be shipped.
+- **~15.8% of orders took 4 days** while **~15.6% of orders took 5 days**.
+- **~2.6% of orders took 1 day** to be shipped while **~2.8% of orders took zero days** to be shipped.
+
+**<h4>Question 3: Where is the majority of markets located from where product is set to sail?</h4>**
+
+center_lat = (data['Latitude'].min() + data['Latitude'].max()) / 2
+center_lon = (data['Longitude'].min() + data['Longitude'].max()) / 2
+
+fig = px.scatter_mapbox(data_frame = data, lat = 'Latitude', lon = 'Longitude', hover_name = 'Department Name', hover_data=['Benefit per order'],
+                        color_discrete_sequence = ['#EF553B'], zoom = 1.5, height = 500, center = dict(lat = center_lat, lon = center_lon))
+
+fig.update_layout(
+    mapbox_style = 'white-bg',
+    mapbox_layers=[
+        {
+            'below' : 'traces',
+            'sourcetype' : 'raster',
+            'source' : ['https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/tile/{z}/{y}/{x}']
+        },
+        {
+            'sourcetype' : 'raster',
+            'source' : ['https://geo.weather.gc.ca/geomet/?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&BBOX={bbox-epsg-3857}&CRS=EPSG:3857'
+                       '&WIDTH=1000&HEIGHT=1000&LAYERS=RADAR_1KM_RDBR&TILED=true&FORMAT=image/png'],
+        }
+      ])
+fig.update_layout(margin = {'r' : 0, 't' : 0, 'l' : 0, 'b' : 0})
+
+# Saving Figure
+plot(figure_or_data = fig, filename = 'SellerMap', auto_open = False, image_width = 1280, image_height = 600, image = 'png')
+fig.show()
+
+**Observation:**
+
+- We can see that **most of the market stores** are **located** at **United States**.
+
+**<h4>Question 4: What is the relationship between Customer Segement and Delivery Status?</h4>**
+
+cust_seg_frame = pd.DataFrame(data = data.groupby(by = ['Customer Segment', 'Delivery Status']).size(), columns = ['Frequency'])
+cust_seg_frame.transpose()
+
+figure = plt.figure(figsize = [15, 8])
+
+ax = sns.countplot(x = 'Customer Segment',  data = data, hue = 'Delivery Status', palette = ['#A38CF4', '#DB5E56', '#56D3DB', '#56DB7F'])
+
+total = data.shape[0]
+
+for p in ax.patches:
+  percentage = '{:.2f}%'.format(100*p.get_height() / total)
+  x = p.get_x() + p.get_width() / 4
+  y = p.get_y() + p.get_height()
+  ax.annotate(s = percentage, xy = (x, y))
+
+plt.yticks(range(0, 55000, 5000))
+plt.xlabel('Consumer Segment', size = 14)
+plt.ylabel('Frequency', size = 14)
+plt.legend(labels = ['Advance shipping', 'Late delivery', 'Shipping canceled', 'Shipping on time'], loc = 'upper right')
+plt.title('Delivery Status vs Customer Segment', y = 1, size = 16)
+plt.show()
+
+**Observation:**
+
+- We can see that **late product delivery** has **higher proportion** for each customer segment.
+- If you see only **4.29% out of total deliveries** were **on time**, while around **54.83% of deliveries were late**.
+- **Advance deliveries** for **Consumer was 11.85%** while for **Home Office and Corporate** it was **~4% and ~7%**.
+- **Cancelled deliveries** has **higher proportion than on time shipping** i.e. **9.3% for Consumer**, **3.17% for Home Office** and **5.37% for Corporate**.
+
+**<h4>Question 5: What was the total sales per day with respect to the order date?</h4>**
+
+figure = plt.figure(figsize = [15, 7])
+sns.lineplot(x = 'order date (DateOrders)', y = 'Sales per customer', data = data, color = '#32B165')
+
+plt.xlabel('Order Date', size = 14)
+plt.ylabel('Total Sales per Day', size = 14)
+plt.legend(labels = ['Total Sales per Day'], loc = 'upper right', frameon = False)
+plt.title('Total Sales vs Order Date', size = 16)
+plt.show()
+
+**Observation:**
+
+- **Most of the sales happened around the month of Oct-Dec,2017**.
+
+**<h4>Question 6: Which state has placed highest number of orders?</h4>**
+
+print('Total States are: ', len(data['Customer State'].value_counts().index))
+figure = plt.figure(figsize = [15, 15])
+ax = sns.barplot(data['Customer State'].value_counts(), data['Customer State'].value_counts().index, 
+                 palette  = sns.color_palette("husl", len(data['Customer State'].unique())))
+total = len(data['Customer State'])
+for p in ax.patches:
+        percentage = '{:.2f}%'.format(100 * p.get_width()/total)
+        x = p.get_x() + p.get_width()
+        y = p.get_y() + p.get_height()
+        ax.annotate(percentage, (x, y))
+
+plt.xlabel('Frequency', size = 14)
+plt.ylabel('Customer State', size = 14)
+plt.title('Order Placed per State', size = 16)
+plt.show()
+
+**Observation:**
+
+- **Puerto Ricans** state **had high number of order placement** around **38%**, more than any other state.
+
+**<h4>Question 7: What amount of benifit was obtained per state?</h4>**
+
+print('Total States are: ', len(data['Customer State'].value_counts().index))
+
+avg_benifit_data = data.groupby(by = ['Customer State'], as_index = False).agg('sum').sort_values(by = 'Benefit per order', ascending = False)
+
+figure = plt.figure(figsize = [15, 15])
+
+ax = sns.barplot(x = avg_benifit_data['Benefit per order'], y = avg_benifit_data['Customer State'], 
+                 palette  = sns.color_palette("husl", len(avg_benifit_data['Customer State'].unique())))
+
+total = avg_benifit_data['Benefit per order'].sum()
+for p in ax.patches:
+        percentage = '{:.2f}%'.format(100 * p.get_width() / total)
+        x = p.get_x() + p.get_width()
+        y = p.get_y() + p.get_height()
+        ax.annotate(percentage, (x, y))
+
+plt.xlabel('Total Profit', size = 14)
+plt.ylabel('Customer State', size = 14)
+plt.title('Benifit per State', size = 16)
+plt.show()
+
+**Observation:**
+
+- As we saw earlier **order placement of Puerto Ricans was very high**, so it is **obivious** that the **profit will be high**.
+- We can see that **profit obtained by Puerto Ricans** was around **38%** i.e. **$\$$1,513,216 dollars**.
+
+**<h4>Question 8: What was the total amount of products under each category that was ordered and at what value it was sold?</h4>**
+
+- As there are 50 categories and each category may contain more products, firstly we shall see all categories in one go and then we shall divide this into two visualizations for better clairty.
+
+cat_name_frame = data.groupby(by = 'Category Name', as_index = False).agg('sum').sort_values(by = 'Order Item Product Price', ascending = False)
+
+figure = plt.figure(figsize = [15, 15])
+
+plt.subplot(1, 2, 1)
+ax1 = sns.barplot(x = 'Order Item Product Price', y = 'Category Name', color = "r", data = cat_name_frame, ci = None)
+ax2 = sns.barplot(x = 'Sales per customer', y = 'Category Name', color = "b", data = cat_name_frame, ci = None)
+ax2.set_xlabel(xlabel = 'Customer Total Sales', size = 14)
+ax2.set_ylabel(ylabel = 'Category Name', size = 14)
+ax2.set_title(label = 'One Side View', size = 14)
+
+
+plt.subplot(1, 2, 2)
+ax3 = sns.barplot(x = 'Sales per customer', y = 'Category Name', color = "b", data = cat_name_frame, ci = None)
+ax4 = sns.barplot(x = 'Order Item Product Price', y = 'Category Name', color = "r", data = cat_name_frame, ci = None)
+ax4.set_xlabel(xlabel = 'Product Total Price', size = 14)
+ax4.set_ylabel(ylabel = '')
+ax4.set_yticks(ticks = [])
+ax4.set_title('Compliment View', size = 14)
+
+plt.suptitle(t = 'Overall View', size = 16)
+plt.show()
+
+**First 25 Categories**
+
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize = [15, 8])
+ax1 = sns.barplot(x = 'Sales per customer', y = 'Category Name', color = "b", data = cat_name_frame.iloc[0:25,:], ci = None, ax = ax1)
+ax1.set_xlabel(xlabel = 'Customer Total Sales', size = 14)
+ax1.set_ylabel(ylabel = 'Category Name', size = 14)
+ax1.set_title(label = 'Selling Price', size = 14)
+
+ax2 = sns.barplot(x = 'Order Item Product Price', y = 'Category Name', color = "r", data = cat_name_frame.iloc[0:25,:], ci = None, ax = ax2)
+ax2.set_xlabel(xlabel = 'Product Total Price', size = 14)
+ax2.set_title(label = 'Cost Price', size = 14)
+ax2.set_ylabel(ylabel = '')
+ax2.set_yticks(ticks = [])
+plt.show()
+
+**Last 25 Categories**
+
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize = [15, 8])
+ax1 = sns.barplot(x = 'Sales per customer', y = 'Category Name', color = "b", data = cat_name_frame.iloc[25:50,:], ci = None, ax = ax1)
+ax1.set_xlabel(xlabel = 'Customer Total Sales', size = 14)
+ax1.set_ylabel(ylabel = 'Category Name', size = 14)
+ax1.set_title(label = 'Selling Price', size = 14)
+
+ax2 = sns.barplot(x = 'Order Item Product Price', y = 'Category Name', color = "r", data = cat_name_frame.iloc[25:50,:], ci = None, ax = ax2)
+ax2.set_xlabel(xlabel = 'Product Total Price', size = 14)
+ax2.set_title(label = 'Cost Price', size = 14)
+ax2.set_ylabel(ylabel = '')
+ax2.set_yticks(ticks = [])
+plt.show()
+
+**Observation:**
+
+- We can see that **some of the product** were **sold at profit** and while **some** were **at loss**.
+- **For example** you can see in **first 25 categories**, **under fishing, Product total price is more than the customer total sales**.
+- It means **retail business** is **facing loss** under **fishing category**.
+
+<a id = Section7></a>
+
+---
+# **7. Post Data Processing & Feature Selection**
+---
+
+- In this part we will **perform encoding over categorical features** and **feed it** to the **Random Forest** because machines can't understand human language.
+- But before that we **need** to **drop certain features** like,
+  - Customer Fname, Customer Lname, Customer Street, Order City, Order State, Product Image, order date (DateOrders), shipping date (DateOrders).
+- We **dropped** these features **because** these **have labels with high cardinality**.
+- **Random Forest** will then **identify important features** for our model **using threshold** over the information gain over reduction in impurity.
+- And **finally** we will **split** our **data** for the **model development**.
+
+drop_labels = ['Customer Fname', 'Customer Lname', 'Customer Street', 'Order City', 'Order State', 'Product Image', 'order date (DateOrders)', 'shipping date (DateOrders)']
+data.drop(labels = drop_labels, axis = 1, inplace = True)
+print('Data Shape:',data.shape)
+
+<a id = Section71></a>
+### **7.1 Encoding Categorical Features**
+
+- In this part we will **analyze** the **number of labels per feature** and **use Target Encoding**.
+- **Reason to use Target encoding:** There are **some features** which are **highly cardinal** in nature.
+
+**Target Encoding:** It is useful when you want to transform catgories based on the probability with respect to target. It has a limitation that they are not generated for the test data. We usually save the target encodings obtained from the training data set and use the same encodings to encode features in the test data set. It can be applied in following cases:
+- **For the case of categorical target:**
+    - Features are replaced with a blend of posterior probability of the target given particular categorical value and the prior probability of the target over all the training data.
+
+- **For the case of continuous target:** 
+    - Features are replaced with a blend of the expected value of the target given particular categorical value and the expected value of the target over all the training data. Example:
+
+<center><img src = "https://raw.githubusercontent.com/insaid2018/Domain_Case_Studies/master/Retail/Images/Target%20Encoding.png"></center>
+
+For example, We want to encode Punjab label, we will perform following:
+- Estimate all Punjab Labels in data, here it is 3,
+- Take mean of target feature with respect to Punjab labels,
+- Replace this value with the label in data as shown in figure above.
+
+**Further Reference:** A complete thesis on how target encoders are helpful can be found under provided <a href = "https://dl.acm.org/doi/10.1145/507533.507538">**link**</a>. You can download pdf present there.
+
+len(data['Type'].unique())
+
+cat_features = []
+label_len = []
+
+# Identify Categorical Features
+for i in data.columns:
+  if (data[i].dtype == object):
+    cat_features.append(i)
+
+for i in cat_features:
+  label_len.append(len(data[i].unique()))
+
+print('Total Categorical Features:', len(cat_features))
+
+# Categorical Feature Frame Representation
+cat_frame = pd.DataFrame(label_len,columns=['Length'],index=cat_features)
+cat_frame.transpose()
+
+**Splitting Categorical & Numerical Features**
+
+# Frame Containing Categorical Features
+cat_data = data[cat_features]
+print('Cat Data Shape:', cat_data.shape)
+
+num_data = data.drop(cat_features, axis = 1)
+print('Num Data Shape:', num_data.shape)
+
+
+cat_data.head(1)
+
+num_data.head(1)
+
+**Performing Target Encoding**
+
+te = TargetEncoder(cols = cat_features)
+cat_data = te.fit_transform(X = data[cat_features], y = data['Benefit per order'])
+print('Cat Data Shape:', cat_data.shape)
+cat_data.head(2)
+
+**Concatenating Numerical & Categorical Features**
+
+new_data = pd.concat(objs = [num_data,cat_data], axis = 1, verify_integrity = True)
+print('New Data Shape:', new_data.shape)
+new_data.head(1)
+
+<a id = Section72></a>
+### **7.2 Feature Selection using Random Forest**
+
+- Now in **real world**, it is very **rare** that **all** the **features** are **important** while developing the model. 
+- So **instead** we **analyze** the **impact** of **input over the target**, either done by performing **statistical** **tests**(Pearson, ANOVA, Chi-Square) or by using **Random Forest**.
+- **Random forests** are one the most **popular machine learning algorithms** because they **provide**:
+ - **a good predictive performance**,
+ - **low overfitting and**
+ - **easy interpretability.** 
+- This **interpretability** is **derived** from the **importance of each feature** on the tree decision **evaluated** on the **reduction** in **impurity**. 
+- In other words, it is **easy to compute** how much **each feature is contributing** to the **decision**.
+- **Below** we have **implemented** a function namely, **SelectFromModel** **available** in **Sklearn** which **uses** the **base estimator** to **identify** **important features**.
+- The **importance** of feature is **determined** on the **basis** of **threshold**(a measure to calculate feature importance).
+
+X = new_data.drop('Benefit per order', axis = 1)
+y = new_data['Benefit per order']
+
+# Have some patience, may take some time :)
+selector = SelectFromModel(RandomForestRegressor(n_estimators = 100, random_state = 42, n_jobs = -1))
+selector.fit(X, y)
+
+# Extracting list of important features
+selected_feat = X.columns[(selector.get_support())].tolist()
+
+print('Total Features Selected are', len(selected_feat))
+
+# Estimated by taking mean(default) of feature importance
+print('Threshold set by Model:', np.round(selector.threshold_, decimals = 2))
+print('Features:', selected_feat)
+
+Below features are plotted against their relative importance (in %age),  of each feature.
+
+# Have some patience, may take some time :)
+figure = plt.figure(figsize = [15, 8])
+
+# If you don't want relative importance, use relative = False in below method
+viz = FeatureImportances(selector.estimator, relative = False)
+viz.fit(X, y)
+
+plt.xlabel('Relative Importance', size = 14)
+plt.ylabel('Features', size = 14)
+plt.title(label = 'Feature Importances', size = 16)
+plt.show()
+
+<a id = Section73></a>
+### **7.3 Data Preparation**
+
+- In the **following section** we will **make a cut** over **Target Feature** i.e Benifit per order **by using** a **categorical feature**.
+- We will **create a new categorical feature** that will **benifit us** in **splitting** the **data** in **more controlled way** by using **stratified split**.
+
+new_data['Benifit_Cat'] = pd.cut(x = new_data['Benefit per order'], bins = [np.NINF, 0, 225, np.inf ], labels = [1, 2, 3])
+
+train_data, test_data = train_test_split(new_data, test_size = 0.2, random_state = 42, stratify = new_data['Benifit_Cat'])
+
+print('Train Data Shape:', train_data.shape)
+print('Test Data Shape:', test_data.shape)
+
+Now that we have split out our data we can remove feature Benifit_Cat from our data set and move further.
+
+train_data.drop(labels = ['Benifit_Cat'], axis = 1, inplace = True)
+test_data.drop(labels = ['Benifit_Cat'], axis = 1, inplace = True)
+
+X_train, y_train = train_data.drop(labels = ['Benefit per order'], axis = 1), train_data['Benefit per order']
+X_test, y_test = test_data.drop(labels = ['Benefit per order'], axis = 1), test_data['Benefit per order']
+
+print('Training Data Shape:', X_train.shape, y_train.shape)
+print('Testing Data Shape:', X_test.shape, y_test.shape)
+
+<a id = Section8></a>
+
+---
+# **8. Model Development & Evaluation**
+---
+
+- In this section we will **develop two type of models**, 
+  - one **using all features** and 
+  - second **using only importatnt feature** marked important by Random Forest.
+- Then we will **compare the results** obtained from them and make our observation.
+- For **evaluation purpose** we have **made a custom function** which will help us in **analyzing the distribution of acutal and predicted values**.
+- **At the end** we will **tune** our **models if required**.
+
+For the **ideal performance** of the **model** a **reference plot** has been **below**:
+
+# Generating 100 values with 
+x = np.linspace(start = 0, stop = 100, num = 101) 
+y = np.random.normal(x)
+
+plt.figure(figsize = [7, 7])
+plt.plot(x, y, 'b.')
+plt.plot(x, x, 'k-') 
+plt.xlabel(xlabel = 'Actual', size = 14)
+plt.ylabel(ylabel = 'Predicted', size = 14)
+plt.title(label = 'Ideal Performance Plot', size = 16)
+plt.xlim(0,100)
+plt.ylim(0,100)
+plt.show()
+
+def PlotScore(y_train, y_train_pred, y_test, y_test_pred):
+  '''
+  Plot visual of acutal and predicted for train & test data
+  y_train: actual values of y train
+  y_train_pred: predicted values of y_train
+  y_test: actual values of y_test
+  y_test_pred: predicted values of y_test
+  '''
+  plt.figure(figsize = [13.66, 6])
+  plt.subplot(1, 2, 1)
+  sns.lineplot(x = y_train, y = y_train_pred, marker = 'o')
+  plt.xlabel('Actual')
+  plt.ylabel('Predicted')
+  plt.title('For Train Data')
+
+  plt.subplot(1, 2, 2)
+  sns.lineplot(x = y_test, y = y_test_pred, marker = 'o')
+  plt.xlabel('Actual')
+  plt.ylabel('Predicted')
+  plt.title('For Test Data')
+  plt.show()
+
+<a id = Section81></a>
+## **8.1 Baseline Models**
+
+- **In this section we will develop modes using all the features and analyze the result obtained from it.**
+
+# Have some patience, may take some time :)
+lr = LinearRegression()
+lr.fit(X_train, y_train)
+
+y_train_pred = lr.predict(X_train)
+y_test_pred = lr.predict(X_test)
+
+print('Acutal Values:', y_test[0:5].values)
+print('Predicted Values:', y_test_pred[0:5])
+
+# Estimating RMSE on Train & Test Data
+print('RMSE (Train Data):', np.round(np.sqrt(mean_squared_error(y_true = y_train, y_pred = y_train_pred)), decimals = 2))
+print('RMSE (Test Data):', np.round(np.sqrt(mean_squared_error(y_true = y_test, y_pred = y_test_pred)), decimals = 2))
+
+# Estimating R-Squared on Train & Test Data
+print('R-Squared (Train Data):', np.round(lr.score(X_train, y_train), decimals = 2)*100, '%')
+print('R-Squared (Test Data):', np.round(lr.score(X_test, y_test), decimals = 2)*100, '%')
+
+# Plotting Acutal vs Predicted values
+PlotScore(y_train, y_train_pred, y_test, y_test_pred)
+
+**Observation:**
+
+- **RMSE obtained** both on **train data** is **56.5** while on **test it is ~61**.
+- **R-Square** is good on **train data** i.e. **71%** while on **test data is 66%**.
+- It clearly define that **model** is **overfitting**.
+
+### **8.1.2 Decision Tree Regressor**
+
+# Have some patience, may take some time :)
+dtc = DecisionTreeRegressor(random_state = 42)
+dtc.fit(X_train, y_train)
+
+y_train_pred = dtc.predict(X_train)
+y_test_pred = dtc.predict(X_test)
+
+print('Acutal Values:', y_test[0:5].values)
+print('Predicted Values:', y_test_pred[0:5])
+
+# Estimating RMSE on Train & Test Data
+print('RMSE (Train Data):', np.round(np.sqrt(mean_squared_error(y_true = y_train, y_pred = y_train_pred)), decimals = 2))
+print('RMSE (Test Data):', np.round(np.sqrt(mean_squared_error(y_true = y_test, y_pred = y_test_pred)), decimals = 2))
+
+# Estimating R-Squared on Train & Test Data
+print('R-Squared (Train Data):', np.round(dtc.score(X_train, y_train), decimals = 2)*100, '%')
+print('R-Squared (Test Data):', np.round(dtc.score(X_test, y_test), decimals = 2)*100, '%')
+
+# Plotting Acutal vs Predicted values
+PlotScore(y_train, y_train_pred, y_test, y_test_pred)
+
+**Observation:**
+
+
+- **RMSE** on **training data** is **0** and **testing data is ~9.6** which is **low** as **compared to Linear Regression**.
+- **R-Squared** is also **better 100% on training data while 99% on test data**.
+- We can see **better results** but **model** is **overfitting**.
+
+### **8.1.3 Random Forest Regressor**
+
+# Have some patience, may take some time :)
+random_forest = RandomForestRegressor(random_state = 42)
+random_forest.fit(X_train, y_train)
+
+y_train_pred = random_forest.predict(X_train)
+y_test_pred = random_forest.predict(X_test)
+
+print('Acutal Values:', y_test[0:5].values)
+print('Predicted Values:', y_test_pred[0:5])
+
+# Estimating RMSE on Train & Test Data
+print('RMSE (Train Data):', np.round(np.sqrt(mean_squared_error(y_true = y_train, y_pred = y_train_pred)), decimals = 2))
+print('RMSE (Test Data):', np.round(np.sqrt(mean_squared_error(y_true = y_test, y_pred = y_test_pred)), decimals = 2))
+
+# Estimating R-Squared on Train & Test Data
+print('R-Squared (Train Data):', np.round(random_forest.score(X_train, y_train), decimals = 2)*100, '%')
+print('R-Squared (Test Data):', np.round(random_forest.score(X_test, y_test), decimals = 2)*100, '%')
+
+# Plotting Acutal vs Predicted values
+PlotScore(y_train, y_train_pred, y_test, y_test_pred)
+
+**Observation:**
+
+- We **didn't obtained any better results than Decision Tree**.
+- **Infact it performed worse** than Decision Tree Regressor.
+- **RMSE obtained** on **training data is 1.61** and **testing data is ~10.5** which is **more than previous model**.
+- There is **no change in obtaining R-Squared** from previous model.
+- This **model** **overfits** the data.
+
+<a id = Section82></a>
+## **8.2 Essential Features Models**
+
+- In this section **we will be using only important features** that were **marked important by Random Forest**.
+- The **important features** we obtained from Random Forest **were Sales per customer and Order Item Profit Ratio**.
+
+train_data = train_data[['Sales per customer', 'Order Item Profit Ratio', 'Benefit per order']]
+test_data = test_data[['Sales per customer', 'Order Item Profit Ratio', 'Benefit per order']]
+
+X_train, y_train = train_data.drop(labels = ['Benefit per order'], axis = 1), train_data['Benefit per order']
+X_test, y_test = test_data.drop(labels = ['Benefit per order'], axis = 1), test_data['Benefit per order']
+
+print('Training Data Shape:', X_train.shape, y_train.shape)
+print('Testing Data Shape:', X_test.shape, y_test.shape)
+
+### **8.2.1 Linear Regression**
+
+# Have some patience, may take some time :)
+lr = LinearRegression()
+lr.fit(X_train, y_train)
+
+y_train_pred = lr.predict(X_train)
+y_test_pred = lr.predict(X_test)
+
+print('Acutal Values:', y_test[0:5].values)
+print('Predicted Values:', y_test_pred[0:5])
+
+# Estimating RMSE on Train & Test Data
+print('RMSE (Train Data):', np.round(np.sqrt(mean_squared_error(y_true = y_train, y_pred = y_train_pred)), decimals = 2))
+print('RMSE (Test Data):', np.round(np.sqrt(mean_squared_error(y_true = y_test, y_pred = y_test_pred)), decimals = 2))
+
+# Estimating R-Squared on Train & Test Data
+print('R-Squared (Train Data):', np.round(lr.score(X_train, y_train), decimals = 2)*100, '%')
+print('R-Squared (Test Data):', np.round(lr.score(X_test, y_test), decimals = 2)*100, '%')
+
+# Plotting Acutal vs Predicted values
+PlotScore(y_train, y_train_pred, y_test, y_test_pred)
+
+**Observation:**
+
+- We can see that **there isn't any major difference after using only important features**.
+- **RMSE obtained** on both **training data and testing data have reduce i.e.  56 and ~61**.
+- **R-Squared obtained** on **training data is 70%** while on **testing data it is 66%**
+- The **model** still **overfits**.
+
+### **8.2.2 Decision Tree Regressor**
+
+# Have some patience, may take some time :)
+dtc = DecisionTreeRegressor(random_state = 42)
+dtc.fit(X_train, y_train)
+
+y_train_pred = dtc.predict(X_train)
+y_test_pred = dtc.predict(X_test)
+
+print('Acutal Values:', y_test[0:5].values)
+print('Predicted Values:', y_test_pred[0:5])
+
+# Estimating RMSE on Train & Test Data
+print('RMSE (Train Data):', np.round(np.sqrt(mean_squared_error(y_true = y_train, y_pred = y_train_pred)), decimals = 2))
+print('RMSE (Test Data):', np.round(np.sqrt(mean_squared_error(y_true = y_test, y_pred = y_test_pred)), decimals = 2))
+
+# Estimating R-Squared on Train & Test Data
+print('R-Squared (Train Data):', np.round(dtc.score(X_train, y_train), decimals = 2)*100, '%')
+print('R-Squared (Test Data):', np.round(dtc.score(X_test, y_test), decimals = 2)*100, '%')
+
+# Plotting Acutal vs Predicted values
+PlotScore(y_train, y_train_pred, y_test, y_test_pred)
+
+**Observation:**
+
+- **RMSE obtained** on both **training and testing data is 0.2 and 9.27** which is **better than previous model** and **its predecessor**.
+- **R-Squared is same** as it's predecessor which is 100% on training and 99% on testing data.
+- However there could be chance of **overfitting**.
+
+### **8.2.3 Random Forest Regressor**
+
+# Have some patience, may take some time :)
+random_forest = RandomForestRegressor(random_state = 42)
+random_forest.fit(X_train, y_train)
+
+y_train_pred = random_forest.predict(X_train)
+y_test_pred = random_forest.predict(X_test)
+
+print('Acutal Values:', y_test[0:5].values)
+print('Predicted Values:', y_test_pred[0:5])
+
+# Estimating RMSE on Train & Test Data
+print('RMSE (Train Data):', np.round(np.sqrt(mean_squared_error(y_true = y_train, y_pred = y_train_pred)), decimals = 2))
+print('RMSE (Test Data):', np.round(np.sqrt(mean_squared_error(y_true = y_test, y_pred = y_test_pred)), decimals = 2))
+
+# Estimating R-Squared on Train & Test Data
+print('R-Squared (Train Data):', np.round(random_forest.score(X_train, y_train), decimals = 2)*100, '%')
+print('R-Squared (Test Data):', np.round(random_forest.score(X_test, y_test), decimals = 2)*100, '%')
+
+# Plotting Acutal vs Predicted values
+PlotScore(y_train, y_train_pred, y_test, y_test_pred)
+
+**Observation:**
+
+- **RMSE obtained** on both **training data** and **testing data is 1.13 and 8.5** which is **lower than previous models**.
+- **R-Squared** obtained is **same as the Decision Tree**.
+- **But wait, we can still see some overfitting**
+- **To ensure** that we **will use** a **cross validation** strategy over this model.
+
+
+<a id = Section83></a>
+## **8.3 Model Evaluation Using K-Fold Cross Validation**
+
+- In this section we will use **K-Fold Cross Validation** over data **ensuring** that **there is no overfitting** over the models.
+- Here **K-Fold** we will use is **10** **because** as already **data** is **large** enough.
+- Here we will be **taking** a **help** of **custom function** which will **return RMSE scores, mean RMSE score and standard deviation**.
+
+def display_scores(scores):
+  print('Scores:', scores)
+  print('Mean:', scores.mean())
+  print('Standard Deviation:', scores.std())
+
+  ### **8.3.1 Linear Regression**
+
+scores = cross_val_score(estimator = lr, X = X_train, y = y_train, scoring = 'neg_mean_squared_error', cv = 10, n_jobs = -1)
+linear_scores = np.sqrt(-scores)
+display_scores(linear_scores)
+
+**Observation:**
+
+- Well we **got same result** as that of single execution of Linear Regression.
+- Mean **RMSE obtained on training data is 56.3**.
+- It shows that our **model** indeed **was overfitting** over train data.
+
+### **8.3.2 Decision Tree Regressor**
+
+scores = cross_val_score(estimator = dtc, X = X_train, y = y_train, scoring = 'neg_mean_squared_error', cv = 10, n_jobs = -1)
+tree_scores = np.sqrt(-scores)
+display_scores(tree_scores)
+
+**Observation:**
+
+- We **again saw some better results**.
+- The mean **RMSE obtained** on train from the cross validation i.e. **2.9**.
+- It **shows** that **Decision Tree was overfitting** the data.
+
+### **8.3.3 Random Forest Regressor**
+
+scores = cross_val_score(estimator = random_forest, X = X_train, y = y_train, scoring = 'neg_mean_squared_error', cv = 10, n_jobs = -1)
+forest_scores = np.sqrt(-scores)
+display_scores(forest_scores)
+
+**Observation:**
+
+- We **got** some **great result again**. Our **RMSE** obtained is **2.7** which is **better** than any other model.
+- Our **end goal** should be **generalizing** the **results** both on **train data** as well as on **test data**.
+- But we **obtained** this **low RMSE because**, the **data** was **trained multiple times** in **stratified fashion**.
+- In **next section** we will **find the parameters** to **tune our model** which will result in low bias and variance i.e. overfitting.
+
+<a id = Section84></a>
+## **8.4 Fine Tuning of Model**
+
+- **Tuning** the model **takes** **extensive work**, so we will be **working** out **with few parameters instead** of **large combinations**.
+- Now that we know that **Random Forest performed better** than **Linear Regression** and **Decision Tree Regressor**, we will **focus on fine tuning** of the model for Random Forest.
+- For that we will **implement Grid Search CV** to **find optimal setting** for the model.
+
+parameter_grid = [{'n_estimators' : [10, 15, 20, 25], 'bootstrap' : [True, False], 'max_depth' : [20, 25, 26, 27, 28, 29, 30], 'oob_score': [True, False]}]
+
+# Have some patience, may take some time :)
+%%time
+rand_forest = RandomForestRegressor(random_state = 42, n_jobs = -1)
+random_search = GridSearchCV(estimator = rand_forest, param_grid = parameter_grid, scoring = 'neg_mean_squared_error', n_jobs = -1, cv = 10, return_train_score = True)
+random_search.fit(X_train, y_train)
+random_search.best_estimator_
+
+random_search.best_params_
+
+<a id = Section85></a>
+## **8.5 Final Model**
+
+- Indeed the result from previous model is not better because we have hardware limitation to process large number of combinations.
+
+# Have some patience, may take some time :)
+random_forest = random_search.best_estimator_
+random_forest.fit(X_train, y_train)
+
+y_train_pred = random_forest.predict(X_train)
+y_test_pred = random_forest.predict(X_test)
+
+print('Acutal Values:', y_test[0:5].values)
+print('Predicted Values:', y_test_pred[0:5])
+
+# Estimating RMSE on Train & Test Data
+print('RMSE (Train Data):', np.round(np.sqrt(mean_squared_error(y_true = y_train, y_pred = y_train_pred)), decimals = 2))
+print('RMSE (Test Data):', np.round(np.sqrt(mean_squared_error(y_true = y_test, y_pred = y_test_pred)), decimals = 2))
+
+# Estimating R-Squared on Train & Test Data
+print('R-Squared (Train Data):', np.round(random_forest.score(X_train, y_train), decimals = 2)*100, '%')
+print('R-Squared (Test Data):', np.round(random_forest.score(X_test, y_test), decimals = 2)*100, '%')
+
+# Plotting Acutal vs Predicted values
+PlotScore(y_train, y_train_pred, y_test, y_test_pred)
+
+**Observation:**
+
+- You can see that the **RMSE has increased a little bit** for testing data i.e **9.3**.
+- But **that's okay** because we have **choosed** only **limited number of combinations** due to hardware limitaitons.
+- Generally, in **real life a script** is **prepared** for **heavy tuning** of the model.
+- This **tuning takes several hours** under **high end performance systems**.
+
+<a id = Section9></a>
+
+---
+# **9. Conclusion**
+---
+
+- We **studied in depth about the data**, its **characteristics** and its **distribution**.
+- We **explored various questions** regarding the supply chain, profit obtained by each state etc.
+- We **handled high dimensional data** in **manual way** so that **later down** it was easy to **identify important features**.
+- We **investigated in depth about the features** which to **retain**(Sales per customer, Order Item Profit Ratio) and which to **discard**.
+- Indeed we **peformed feature selection using Random Forest** because it is fast, accurate and reliable.
+- We **made two different types of model** i.e. 
+  - one **using all features**, 
+  - two **using important features** 
+  
+- We came to **conclusion** that there was **very little impact after discarding** the **un-important features**.
+- At **final stage Random Forest outperformed all the models** because of **low error**.
+- We **performed cross validation** to **ensure whether our model was overfitting or not**.
+- Then **after tuning with some combinations we finalized Random Forest**.
