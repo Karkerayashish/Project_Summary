@@ -179,4 +179,3 @@ This **concludes** our Exploratory Data Analysis.
   - Using RFM (Recency Frequency Monetary)
   
 - **Both** are **used widely**, but **RFM is much better** than automating the whole solution **because** we are **more precise** in **identifying** the **customer** frequent **buying habits** and their **spend**.
-
