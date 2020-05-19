@@ -175,3 +175,17 @@ For example, We want to encode Punjab label, we will perform following:
 **Further Reference:** A complete thesis on how target encoders are helpful can be found under provided <a href = "https://dl.acm.org/doi/10.1145/507533.507538">**link**</a>. You can download pdf present there.
 
 
+### **Feature Selection using Random Forest**
+
+- Now in **real world**, it is very **rare** that **all** the **features** are **important** while developing the model. 
+- So **instead** we **analyze** the **impact** of **input over the target**, either done by performing **statistical** **tests**(Pearson, ANOVA, Chi-Square) or by using **Random Forest**.
+- **Random forests** are one the most **popular machine learning algorithms** because they **provide**:
+ - **a good predictive performance**,
+ - **low overfitting and**
+ - **easy interpretability.** 
+- This **interpretability** is **derived** from the **importance of each feature** on the tree decision **evaluated** on the **reduction** in **impurity**. 
+- In other words, it is **easy to compute** how much **each feature is contributing** to the **decision**.
+- **Below** we have **implemented** a function namely, **SelectFromModel** **available** in **Sklearn** which **uses** the **base estimator** to **identify** **important features**.
+- The **importance** of feature is **determined** on the **basis** of **threshold**(a measure to calculate feature importance).
+
+
