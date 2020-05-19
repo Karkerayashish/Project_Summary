@@ -266,6 +266,67 @@ For example, We want to encode Punjab label, we will perform following:
 - **But wait, we can still see some overfitting**
 - **To ensure** that we **will use** a **cross validation** strategy over this model.
 
+## **Model Evaluation Using K-Fold Cross Validation**
 
+- In this section we will use **K-Fold Cross Validation** over data **ensuring** that **there is no overfitting** over the models.
+- Here **K-Fold** we will use is **10** **because** as already **data** is **large** enough.
+- Here we will be **taking** a **help** of **custom function** which will **return RMSE scores, mean RMSE score and standard deviation**.
+
+### **Linear Regression**
+
+**Observation:**
+
+- Well we **got same result** as that of single execution of Linear Regression.
+- Mean **RMSE obtained on training data is 56.3**.
+- It shows that our **model** indeed **was overfitting** over train data.
+
+
+### **Decision Tree Regressor**
+
+**Observation:**
+
+- We **again saw some better results**.
+- The mean **RMSE obtained** on train from the cross validation i.e. **2.9**.
+- It **shows** that **Decision Tree was overfitting** the data.
+
+### **Random Forest Regressor**
+
+**Observation:**
+
+- We **got** some **great result again**. Our **RMSE** obtained is **2.7** which is **better** than any other model.
+- Our **end goal** should be **generalizing** the **results** both on **train data** as well as on **test data**.
+- But we **obtained** this **low RMSE because**, the **data** was **trained multiple times** in **stratified fashion**.
+- In **next section** we will **find the parameters** to **tune our model** which will result in low bias and variance i.e. overfitting.
+
+## **Fine Tuning of Model**
+
+- **Tuning** the model **takes** **extensive work**, so we will be **working** out **with few parameters instead** of **large combinations**.
+- Now that we know that **Random Forest performed better** than **Linear Regression** and **Decision Tree Regressor**, we will **focus on fine tuning** of the model for Random Forest.
+- For that we will **implement Grid Search CV** to **find optimal setting** for the model.
+
+**Observation:**
+
+- You can see that the **RMSE has increased a little bit** for testing data i.e **9.3**.
+- But **that's okay** because we have **choosed** only **limited number of combinations** due to hardware limitaitons.
+- Generally, in **real life a script** is **prepared** for **heavy tuning** of the model.
+- This **tuning takes several hours** under **high end performance systems**.
+
+---
+# **Conclusion**
+---
+
+- We **studied in depth about the data**, its **characteristics** and its **distribution**.
+- We **explored various questions** regarding the supply chain, profit obtained by each state etc.
+- We **handled high dimensional data** in **manual way** so that **later down** it was easy to **identify important features**.
+- We **investigated in depth about the features** which to **retain**(Sales per customer, Order Item Profit Ratio) and which to **discard**.
+- Indeed we **peformed feature selection using Random Forest** because it is fast, accurate and reliable.
+- We **made two different types of model** i.e. 
+  - one **using all features**, 
+  - two **using important features** 
+  
+- We came to **conclusion** that there was **very little impact after discarding** the **un-important features**.
+- At **final stage Random Forest outperformed all the models** because of **low error**.
+- We **performed cross validation** to **ensure whether our model was overfitting or not**.
+- Then **after tuning with some combinations we finalized Random Forest**.
 
 
