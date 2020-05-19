@@ -203,4 +203,35 @@ For example, We want to encode Punjab label, we will perform following:
 - Then we will **compare the results** obtained from them and make our observation.
 - **At the end** we will **tune** our **models if required**.
 
+## **Baseline Models**
+
+- **In this section we will develop modes using all the features and analyze the result obtained from it.**
+
+### **Linear Regression
+
+**Observation:**
+
+- **RMSE obtained** both on **train data** is **56.5** while on **test it is ~61**.
+- **R-Square** is good on **train data** i.e. **71%** while on **test data is 66%**.
+- It clearly define that **model** is **overfitting**.
+
+
+### **Decision Tree Regressor**
+
+**Observation:**
+
+- **RMSE** on **training data** is **0** and **testing data is ~9.6** which is **low** as **compared to Linear Regression**.
+- **R-Squared** is also **better 100% on training data while 99% on test data**.
+- We can see **better results** but **model** is **overfitting**.
+
+### **Random Forest Regressor**
+
+**Observation:**
+
+- We **didn't obtained any better results than Decision Tree**.
+- **Infact it performed worse** than Decision Tree Regressor.
+- **RMSE obtained** on **training data is 1.61** and **testing data is ~10.5** which is **more than previous model**.
+- There is **no change in obtaining R-Squared** from previous model.
+- This **model** **overfits** the data.
+
 
