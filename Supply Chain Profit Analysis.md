@@ -117,3 +117,39 @@ This data set is based on supply chain management provided by DataCo Global and 
 |52|**Shipping date (DateOrders)**|Exact date and time of shipment.|
 |53|**Shipping Mode**|The following shipping modes are presented : [Standard Class , First Class , Second Class , Same Day].|
 
+
+---
+# **Data Pre-Processing**
+---
+
+### **Identification & Handling of Missing Data**
+### **Zero Data Identification & Handling**
+### **Identification & Handling of Redundant Data**
+### **Identfication & Handling of Redundant Features**
+### **Identification & Handling of Inconsistent Data Types**
+
+---
+# **Exploratory Data Analysis**
+---
+
+*Question 1: What is the frequency and proportion of scheduled shipment days of order?*
+*Question 2: What is the frequency and proportion of real shipment days of order?*
+*Question 3: Where is the majority of markets located from where product is set to sail?*
+*Question 4: What is the relationship between Customer Segement and Delivery Status?*
+*Question 5: What was the total sales per day with respect to the order date?*
+*Question 6: Which state has placed highest number of orders?*
+*Question 7: What amount of benifit was obtained per state?*
+*Question 8: What was the total amount of products under each category that was ordered and at what value it was sold?*
+
+---
+# **Post Data Processing & Feature Selection**
+---
+
+- In this part we will **perform encoding over categorical features** and **feed it** to the **Random Forest** because machines can't understand human language.
+- But before that we **need** to **drop certain features** like,
+  - Customer Fname, Customer Lname, Customer Street, Order City, Order State, Product Image, order date (DateOrders), shipping date (DateOrders).
+- We **dropped** these features **because** these **have labels with high cardinality**.
+- **Random Forest** will then **identify important features** for our model **using threshold** over the information gain over reduction in impurity.
+- And **finally** we will **split** our **data** for the **model development**.
+
+
