@@ -188,4 +188,19 @@ For example, We want to encode Punjab label, we will perform following:
 - **Below** we have **implemented** a function namely, **SelectFromModel** **available** in **Sklearn** which **uses** the **base estimator** to **identify** **important features**.
 - The **importance** of feature is **determined** on the **basis** of **threshold**(a measure to calculate feature importance).
 
+### **Data Preparation**
+
+- In the **following section** we will **make a cut** over **Target Feature** i.e Benifit per order **by using** a **categorical feature**.
+- We will **create a new categorical feature** that will **benifit us** in **splitting** the **data** in **more controlled way** by using **stratified split**.
+
+---
+# **Model Development & Evaluation**
+---
+
+- In this section we will **develop two type of models**, 
+  - one **using all features** and 
+  - second **using only importatnt feature** marked important by Random Forest.
+- Then we will **compare the results** obtained from them and make our observation.
+- **At the end** we will **tune** our **models if required**.
+
 
