@@ -207,7 +207,7 @@ For example, We want to encode Punjab label, we will perform following:
 
 - **In this section we will develop modes using all the features and analyze the result obtained from it.**
 
-### **Linear Regression
+### **Linear Regression**
 
 **Observation:**
 
@@ -233,5 +233,39 @@ For example, We want to encode Punjab label, we will perform following:
 - **RMSE obtained** on **training data is 1.61** and **testing data is ~10.5** which is **more than previous model**.
 - There is **no change in obtaining R-Squared** from previous model.
 - This **model** **overfits** the data.
+
+## **Essential Features Models**
+
+- In this section **we will be using only important features** that were **marked important by Random Forest**.
+- The **important features** we obtained from Random Forest **were Sales per customer and Order Item Profit Ratio**.
+
+### **Linear Regression**
+
+**Observation:**
+
+- We can see that **there isn't any major difference after using only important features**.
+- **RMSE obtained** on both **training data and testing data have reduce i.e.  56 and ~61**.
+- **R-Squared obtained** on **training data is 70%** while on **testing data it is 66%**
+- The **model** still **overfits**.
+
+
+### **Decision Tree Regressor**
+
+**Observation:**
+
+- **RMSE obtained** on both **training and testing data is 0.2 and 9.27** which is **better than previous model** and **its predecessor**.
+- **R-Squared is same** as it's predecessor which is 100% on training and 99% on testing data.
+- However there could be chance of **overfitting**.
+
+### **Random Forest Regressor**
+
+**Observation:**
+
+- **RMSE obtained** on both **training data** and **testing data is 1.13 and 8.5** which is **lower than previous models**.
+- **R-Squared** obtained is **same as the Decision Tree**.
+- **But wait, we can still see some overfitting**
+- **To ensure** that we **will use** a **cross validation** strategy over this model.
+
+
 
 
