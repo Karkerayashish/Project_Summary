@@ -153,3 +153,25 @@ This data set is based on supply chain management provided by DataCo Global and 
 - And **finally** we will **split** our **data** for the **model development**.
 
 
+### **Encoding Categorical Features**
+
+- In this part we will **analyze** the **number of labels per feature** and **use Target Encoding**.
+- **Reason to use Target encoding:** There are **some features** which are **highly cardinal** in nature.
+
+**Target Encoding:** It is useful when you want to transform catgories based on the probability with respect to target. It has a limitation that they are not generated for the test data. We usually save the target encodings obtained from the training data set and use the same encodings to encode features in the test data set. It can be applied in following cases:
+- **For the case of categorical target:**
+    - Features are replaced with a blend of posterior probability of the target given particular categorical value and the prior probability of the target over all the training data.
+
+- **For the case of continuous target:** 
+    - Features are replaced with a blend of the expected value of the target given particular categorical value and the expected value of the target over all the training data. Example:
+
+<center><img src = "https://raw.githubusercontent.com/insaid2018/Domain_Case_Studies/master/Retail/Images/Target%20Encoding.png"></center>
+
+For example, We want to encode Punjab label, we will perform following:
+- Estimate all Punjab Labels in data, here it is 3,
+- Take mean of target feature with respect to Punjab labels,
+- Replace this value with the label in data as shown in figure above.
+
+**Further Reference:** A complete thesis on how target encoders are helpful can be found under provided <a href = "https://dl.acm.org/doi/10.1145/507533.507538">**link**</a>. You can download pdf present there.
+
+
