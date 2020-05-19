@@ -122,24 +122,24 @@ This data set is based on supply chain management provided by DataCo Global and 
 # **Data Pre-Processing**
 ---
 
-### **Identification & Handling of Missing Data**
-### **Zero Data Identification & Handling**
-### **Identification & Handling of Redundant Data**
-### **Identfication & Handling of Redundant Features**
-### **Identification & Handling of Inconsistent Data Types**
+- Identification & Handling of Missing Data
+- Zero Data Identification & Handling
+- Identification & Handling of Redundant Data
+- Identfication & Handling of Redundant Features
+- Identification & Handling of Inconsistent Data Types
 
 ---
 # **Exploratory Data Analysis**
 ---
 
-*Question 1: What is the frequency and proportion of scheduled shipment days of order?*
-*Question 2: What is the frequency and proportion of real shipment days of order?*
-*Question 3: Where is the majority of markets located from where product is set to sail?*
-*Question 4: What is the relationship between Customer Segement and Delivery Status?*
-*Question 5: What was the total sales per day with respect to the order date?*
-*Question 6: Which state has placed highest number of orders?*
-*Question 7: What amount of benifit was obtained per state?*
-*Question 8: What was the total amount of products under each category that was ordered and at what value it was sold?*
+- *Question 1: What is the frequency and proportion of scheduled shipment days of order?*
+- *Question 2: What is the frequency and proportion of real shipment days of order?*
+- *Question 3: Where is the majority of markets located from where product is set to sail?*
+- *Question 4: What is the relationship between Customer Segement and Delivery Status?*
+- *Question 5: What was the total sales per day with respect to the order date?*
+- *Question 6: Which state has placed highest number of orders?*
+- *Question 7: What amount of benifit was obtained per state?*
+- *Question 8: What was the total amount of products under each category that was ordered and at what value it was sold?*
 
 ---
 # **Post Data Processing & Feature Selection**
